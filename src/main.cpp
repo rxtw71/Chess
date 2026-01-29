@@ -2,13 +2,11 @@
 #include "board.h"
 #include "engine.h"
 #include "movegen.h"
-#include "evaluation.h"
 #include "hash.h"
-#include "perft.h"
 #include "types.h"
+#include "uci.h"
 
 #include <iostream>
-#include <utility>
 
 using namespace Engine;
 std::string move_to_san(Board &b, Move m);
@@ -52,18 +50,14 @@ void gameloop (Board& b) {
 }
 
 int main() {
-  std::cout << "Initializing board" << std::endl;
   Bitboards::init();
   init_hash();
-  std::vector<std::string> png;
 
   Board board;
   board.init();
   //board.loadFEN("4k3/8/8/8/8/8/8/3QK3 w - - 0 1");
-  board.print();
 
-  //perft_benchmark(board, 6);
-  gameloop(board);
+  uci_loop();
 }
 
 std::string move_to_san(Board &b, Move m) {

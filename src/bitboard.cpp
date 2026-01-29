@@ -48,8 +48,6 @@ namespace Engine {
         PsudoAttacks[KNIGHT][s1] |= safe_distance(s1, step);
 
     }
-
-    std::cout << "DONE INIT" << std::endl;
   }
 
    namespace {

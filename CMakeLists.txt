@@ -13,6 +13,7 @@ add_executable(app
     src/evaluation.cpp
     src/engine.cpp
     src/hash.cpp
+    src/uci.cpp
   )
 
 target_include_directories(app PRIVATE src)
