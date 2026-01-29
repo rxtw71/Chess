@@ -53,11 +53,13 @@ int main() {
   Bitboards::init();
   init_hash();
 
+  UCILog logbook("uci.log");
   Board board;
   board.init();
   //board.loadFEN("4k3/8/8/8/8/8/8/3QK3 w - - 0 1");
 
-  uci_loop();
+  setup_socket(5000);
+  UCI_LOOP(logbook);
 }
 
 std::string move_to_san(Board &b, Move m) {

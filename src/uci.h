@@ -6,9 +6,9 @@
 #include "engine.h"
 #include "types.h"
 #include "board.h"
+#include "output.h"
 
 namespace Engine {
-  void uci_loop();
-  void handle_position (Board& b, std::string line);
-  void handle_go (Board& b, std::string line);
+  void UCI_LOOP(UCILog& logbook);
+  void setup_socket(int port);
 }
