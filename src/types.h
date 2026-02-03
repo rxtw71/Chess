@@ -7,7 +7,7 @@
 
 
 
-namespace Engine {
+namespace Leaf {
   using Bitboard = uint64_t;
   using Key = uint64_t;
 

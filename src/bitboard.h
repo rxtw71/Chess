@@ -8,7 +8,7 @@
 
 #include "types.h"
 
-namespace Engine {
+namespace Leaf {
   namespace Bitboards {
     void init();
     std::string pretty ();
@@ -31,6 +31,25 @@ namespace Engine {
   constexpr Bitboard Rank6BB = Rank1BB << (8 * 5);
   constexpr Bitboard Rank7BB = Rank1BB << (8 * 6);
   constexpr Bitboard Rank8BB = Rank1BB << (8 * 7);
+
+  constexpr Bitboard FileMaskBB[] = {
+    FileABB, FileBBB, FileCBB, FileDBB,
+    FileEBB, FileFBB, FileGBB, FileHBB
+  };
+  constexpr Bitboard RankMaskBB[] = {
+    Rank1BB, Rank2BB, Rank3BB, Rank4BB,
+    Rank5BB, Rank6BB, Rank7BB, Rank8BB
+  };
+  constexpr inline Bitboard adjecentFileBB (int f) {
+    Bitboard mask = 0;
+
+    if (f > 0)
+      mask |= FileMaskBB[f - 1];
+    if (f < 7)
+      mask |= FileMaskBB[f + 1];
+
+    return mask;
+  }
 
   extern uint8_t SquareDistance[SQUARE_NB][SQUARE_NB];
 

@@ -5,7 +5,7 @@
 
 #include <string>
 
-namespace Engine {
+namespace Leaf {
   class Board {
     public:
     Bitboard piecebb[PIECE_NB];

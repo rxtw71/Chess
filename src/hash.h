@@ -4,7 +4,7 @@
 #include "bitboard.h"
 #include "die.h"
 
-namespace Engine {
+namespace Leaf {
   using Hash = uint64_t;
   void init_hash ();
 

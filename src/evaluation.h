@@ -3,7 +3,7 @@
 #include "board.h"
 #include "types.h"
 
-namespace Engine {
+namespace Leaf {
 
   int Eval (Board& b);
   int materialAdvantage (Board& b);

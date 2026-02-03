@@ -3,7 +3,7 @@
 #include "board.h"
 #include "types.h"
 
-namespace Engine {
+namespace Leaf {
   //basic material vbased evaluation
   int materialAdvantage (Board& b) {
     int score = 0;
@@ -18,6 +18,25 @@ namespace Engine {
     score -= popcount(b.piecebb[B_ROOK]) * RookValue;
     score += popcount(b.piecebb[W_QUEEN]) * QueenValue;
     score -= popcount(b.piecebb[B_QUEEN]) * QueenValue;
+
+    return score;
+  }
+  
+  int mobilityAdvantage (Board& b) {
+    int score = 0;
+    int mobscore[] = {0, 0, 4, 3, 0, 0, 0};
+
+    Piece p[] = {W_KNIGHT, B_KNIGHT, W_BISHOP, B_BISHOP};
+    for (auto pp : p) {
+      Bitboard piece = b.piecebb[pp];
+      while (piece) {
+        Square s = pop_lsb(piece);
+        Bitboard attacks = attacks_bb(type_of(pp), s, b.Occupancy[2]);
+        int x = (color_of(pp) == WHITE) ? 1 : -1;
+        score += popcount(attacks) * x * mobscore[type_of(pp)];
+
+      }
+    }
 
     return score;
   }
@@ -67,6 +86,54 @@ namespace Engine {
     -30, -30, -30, -30, -30, -30, -30,
   };
       
+  //Pawn evaluation r`fucntions
+  constexpr Value DOUBLEPAWNS_PEN = 5;
+  constexpr Value ISOLATEDPAWN_PEN = 10;
+  constexpr Value PASSEDPAWN = 8;
+  int PawnStructureEval (Bitboard wp, Bitboard bp) {
+    int score = 0;
+
+    //counts pawn per file
+    int wpfile_cc[8]; int bpfile_cc[8];
+    for (int i = 0; i < 8; i++) {
+      wpfile_cc[i] = popcount(wp & FileMaskBB[i]);
+      bpfile_cc[i] = popcount(bp & FileMaskBB[i]);
+    }
+
+    //Penlty for stacked pawns and isolatedolated pawns
+    for (int i = 0; i < 8; i++) {
+      if (wpfile_cc[i] > 1)
+        score -= (wpfile_cc[i] - 1) * DOUBLEPAWNS_PEN;
+      if (bpfile_cc[i] > 1)
+        score += (bpfile_cc[i] - 1) * DOUBLEPAWNS_PEN;
+
+      if (wpfile_cc[i] != 0) {
+        bool isolated = true;
+        if (i > 0 && wpfile_cc[i - 1] > 0)
+          isolated = false;
+        if (i < 7 && wpfile_cc[i + 1] > 0)
+          isolated = false;
+        if (isolated)
+          score -= ISOLATEDPAWN_PEN;
+      }
+      if (bpfile_cc[i] != 0) {
+        bool isolated = true;
+        if (i > 0 && bpfile_cc[i - 1] > 0)
+          isolated = false;
+        if (i < 7 && bpfile_cc[i + 1] > 0)
+          isolated = false;
+        if (isolated)
+          score += ISOLATEDPAWN_PEN;
+      }
+
+    }
+
+    return score;
+  }
+  
+
+
+
 
   int GamePhase (Board& b) {
     int phase = 0;
@@ -158,6 +225,7 @@ namespace Engine {
     score += materialAdvantage(b);
     score += KnightEval(b);
     score += PawnEval(b);
+    score += PawnStructureEval(b.piecebb[W_PAWN], b.piecebb[B_PAWN]);
     score += BishopEval(b);
     score += KingEval(b);
 

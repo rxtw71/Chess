@@ -11,7 +11,7 @@
 
 //this file handles ouput for either tcp socket based or stdout based
 //
-namespace Engine {
+namespace Leaf {
   struct UCILog {
     std::ofstream log_file;
     std::mutex log_mutex; // optional for thread safety

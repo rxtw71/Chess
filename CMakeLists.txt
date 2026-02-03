@@ -14,6 +14,7 @@ add_executable(app
     src/engine.cpp
     src/hash.cpp
     src/uci.cpp
+    src/errosion.cpp
   )
 
 target_include_directories(app PRIVATE src)

@@ -6,7 +6,7 @@
 
 #include <vector>
 
-namespace Engine {
+namespace Leaf {
 
   struct MoveList {
     Move data[256];
@@ -72,6 +72,6 @@ namespace Engine {
   void PsudoMoves (Board& b, Color c, MoveList& list);
   void LegalMoves (Board& b, MoveList& list);
   int moveScore (Board& b, Move& m);
-  void sortMoveList (Board& b, MoveList& list, Move& TT);
+  void sortMoveList (Board& b, MoveList& list, Move& TT, Move& pv, Move& k1, Move& k2);
 
 }

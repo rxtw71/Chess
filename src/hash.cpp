@@ -2,7 +2,7 @@
 #include "die.h"
 #include "types.h"
 
-namespace Engine {
+namespace Leaf {
   Hash pieceHashTable[12][64];
   Hash colorHashTable;
   Hash castleHashTable[16];

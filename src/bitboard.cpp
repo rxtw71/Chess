@@ -1,7 +1,7 @@
 #include "bitboard.h"
 #include <iostream>
 
-namespace Engine {
+namespace Leaf {
   
   uint8_t SquareDistance[SQUARE_NB][SQUARE_NB];
 

@@ -8,7 +8,7 @@
 #include <iostream>
 #include <chrono>
 
-namespace Engine {
+namespace Leaf {
 
   inline std::string sqTostr (Square s) {
     char file = 'a' + (s % 8);
