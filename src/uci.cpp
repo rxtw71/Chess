@@ -33,6 +33,7 @@ namespace Leaf {
   Move stringToMove (std::string m);
   void goMove (Output& out, int depth);
   void goPerft (Output& out, int depth);
+  void goSelf (Output& out, int depth);
 
 
 
@@ -158,6 +159,11 @@ namespace Leaf {
         std::thread searchThread(goMove, std::ref(out), depth);
         searchThread.detach();
       }
+      else if (words[1] == "self") {
+        int depth = std::stoi(words[2]);
+        std::thread selfThread(goSelf, std::ref(out), depth);
+        selfThread.detach();
+      }
       else if (words[1] == "perft") {
         int depth = std::stoi(words[2]);
         std::thread perftThread(goPerft, std::ref(out), depth);
@@ -223,6 +229,22 @@ namespace Leaf {
     output += moveToString(m);
     out.send(pvToStr());
     out.send(output);
+  }
+  void goSelf (Output& out, int depth) {
+    std::vector<Move> pgn;
+    stopSearch.store(false);
+    while (!stopSearch.load()) {
+      std::cout << "Loop running.." << std::endl;
+      Move m = SearchMove(board, depth);
+      Board::State st;
+      board.MakeMove(m, st);
+      pgn.push_back(m);
+      std::string pgndata = " ";
+      for (auto M : pgn) {
+        pgndata += moveToString(M) + " ";
+      }
+      out.send(pgndata);
+    }
   }
   void goPerft (Output& out, int depth) {
     int nodes = perft(board, depth);

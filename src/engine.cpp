@@ -4,6 +4,7 @@
 #include "movegen.h"
 #include "types.h"
 #include <chrono>
+#include <cmath>
 #include <ctime>
 #include <vector>
 
@@ -37,12 +38,25 @@ namespace Leaf {
     int alphaOrig = alpha;
     Bound iflag;
     if (transposition.probe(b.key, depth, ttscore, alpha, beta, iflag)) {
-      return ttscore;
+      if (iflag == BOUND_EXACT) return ttscore;
+      else if (iflag == BOUND_LOWER && ttscore > alpha) alpha = ttscore;
+      else if (iflag == BOUND_UPPER && ttscore < beta) beta = ttscore;
+      if (alpha >= beta) return ttscore;
     }
 
     //Checkmate and stalemate conditions
     if (DrawGame(b))
       return VALUE_DRAW;
+
+    //Null Move Pruning
+    if (depth >= 3 && !b.kingInCheck(b.turn)) {
+      Board::State null;
+      b.MakeNullMove(null);
+      int nullscore = -NegaMax(b, depth -2, ply + 1, -beta, -beta + 1);
+      b.UnmakeNULLMove(null);
+      if (nullscore >= beta)
+        return nullscore;
+    }
 
     MoveList list;
     LegalMoves(b, list);
@@ -59,7 +73,7 @@ namespace Leaf {
     }
 
     if (depth == 0)
-      return Eval(b);
+      return quiesciene(b, alpha, beta);
 
     int score;
     int bestScore = -VALUE_INFINITE;
@@ -199,6 +213,36 @@ namespace Leaf {
     std::cout << "Searched nodes->" << SEARCHED_NODES << std::endl;
     return bestMove;
   }
+  
+  int quiesciene(Board &b, int alpha, int beta) {
+
+    int stand_pat = Eval(b);
+    if (stand_pat >= beta)
+      return stand_pat;
+
+    if (alpha < stand_pat)
+      alpha = stand_pat;
+
+    int score = -INFINITY;
+
+    MoveList list;
+    LegalMoves(b, list);
+
+    Board::State state;
+    for (int i = 0; i < list.count; i++) {
+      if (!b.isCapture(list.data[i]) && !b.givesCheck(list.data[i]))
+        continue;
+    
+      b.MakeMove(list.data[i], state);
+      score = -quiesciene(b, -beta, -alpha);
+      b.UnmakeMove(list.data[i]);
+
+      if (score > alpha) alpha = score;
+      if (score >= beta) return beta;
+    }
+    return alpha;
+  }
+
 
   std::vector<Move> readPV() {
     std::vector<Move> pvs;

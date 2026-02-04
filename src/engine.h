@@ -62,7 +62,7 @@ namespace Leaf {
 
   Move FindBestMove (Board& b, int depth);
   Move SearchMove(Board& b, int maxDepth);
-  int quiesciene (Board& b);
+  int quiesciene(Board &b, int alpha, int beta);
   void sortMoveList (Board& b, MoveList& list, Move& tt, Move& pv, Move& k1, Move& k2);
   std::vector <Move> readPV ();
 }
