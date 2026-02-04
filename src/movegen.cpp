@@ -157,42 +157,6 @@ namespace Leaf {
 
     }
   }
-
-  inline bool capturegood (Board& b, Move& m) {
-    Square x = m.from_sq();
-    Square y = m.to_sq();
-    Piece attacker = b.data[x];
-    Piece victim = b.data[y];
-    return PieceValue[victim] + PawnValue >=  PieceValue[attacker];
-  }
-
-  int moveScore (Board& b, Move& m, Move& TT, Move& pv, Move& k1, Move& k2) {
-    int score = 0;
-    if (m == TT) score += 9999;
-    if (m == pv) score += 9998;
-    if (b.givesCheck(m)) score += 500;
-    if (b.isCapture(m) && capturegood(b, m)) score += 1000;
-    else if (b.isCapture(m) && !capturegood(b, m)) score += 100;
-    if (m == k1) score += 500;
-    else if (m == k2) score += 450;
-    if (m.type_of() == PROMOTION) score += 700;
-    if (m.type_of() == EN_PASSANT) score += 400;
-    return score;
-  }
-
-  void sortMoveList (Board& b, MoveList& list, Move& TT, Move& pv, Move& k1, Move& k2) {
-    for (int i = 0; i < list.count - 1; i++) {
-      for (int j = i + 1; j < list.count; j++) {
-        if (moveScore(b, list.data[i], TT, pv, k1, k2) < moveScore(b, list.data[j], TT, pv, k1, k2)) {
-          Move temp = list.data[i];
-          list.data[i] = list.data[j];
-          list.data[j] = temp;
-          //std::swap(list.data[i], list.data[j]);
-        }
-      }
-    }
-  }
-
   void LegalMoves(Board& b, MoveList &list) {
     MoveList psudo;
     PsudoMoves(b, b.turn, psudo);

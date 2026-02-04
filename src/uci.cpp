@@ -29,6 +29,7 @@ namespace Leaf {
   void listenClient ();
   void handleCommand (Output& out, std::string cmd);
   std::string moveToString(const Move& m);
+  std::string pvToStr();
   Move stringToMove (std::string m);
   void goMove (Output& out, int depth);
   void goPerft (Output& out, int depth);
@@ -220,6 +221,7 @@ namespace Leaf {
     Move m = SearchMove(board, depth);
     std::string output = "bestmove ";
     output += moveToString(m);
+    out.send(pvToStr());
     out.send(output);
   }
   void goPerft (Output& out, int depth) {
@@ -284,6 +286,15 @@ Move stringToMove (std::string m) {
     }
   }
   return move;
+}
+
+std::string pvToStr() {
+  std::string s = "PV: ";
+  auto v = readPV();
+  for (auto u : v) {
+    s += moveToString(u) + " ";
+  }
+  return s;
 }
 
 }
